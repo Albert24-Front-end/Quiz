@@ -1,51 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ProgressBar } from "../components/ProgressBar";
+import { Header } from "../components/Header";
+import { AnswerItem } from "../components/AnswerItem";
+import { useNavigate } from "react-router-dom";
+import { AppButton } from "../components/AppButton";
 
 const StepFour = () => {
+  const navigate = useNavigate()
+  const variants = [
+    {
+      variantId: "variant-1",
+      variantText: "1",
+    },
+    {
+      variantId: "variant-2",
+      variantText: "2",
+    },
+    {
+      variantId: "variant-3",
+      variantText: "3",
+    },
+    {
+      variantId: "variant-4",
+      variantText: "4",
+    },
+    {
+      variantId: "variant-5",
+      variantText: "5",
+    },
+  ]
+  const [gradeVariant, setGradeVariant] = useState(null);
+  const [buttonError, setButtonError] = useState(true);
+  useEffect(()=>{
+    if(gradeVariant === null) {
+      setButtonError(true)
+      localStorage.setItem("grade", "")
+    } else {
+      setButtonError(false)
+      localStorage.setItem("grade", JSON.stringify(gradeVariant))
+    }
+  }, [gradeVariant]);
   return (
     <div className="container">
       <div className="wrapper">
         <div className="emoji-quiz">
-          <div className="indicator">
-            <div className="indicator__text">
-              <span className="indicator__description">
-                Скидка за прохождение опроса:
-              </span>
-              <span className="indicator__value">15%</span>
-            </div>
-            <div className="indicator__progressbar">
-              <div className="indicator__unit indicator__unit-1 _active"></div>
-              <div className="indicator__unit indicator__unit-2 _active"></div>
-              <div className="indicator__unit indicator__unit-3 _active"></div>
-              <div className="indicator__unit indicator__unit-4"></div>
-            </div>
-          </div>
+        <ProgressBar currentStep={4}/>
           <div className="question">
-            <h2>4. Занимательный вопрос</h2>
+          <Header headerType="h2" headerText="4. Насколько Вы готовы начать обучение в TEXNIKUM?"/>
             <ul className="level-variants">
-              <li className="variant-wrapper">
-                <input required type="radio" name="variant" id="variant-1" />
-                <label htmlFor="variant-1">1</label>
-              </li>
-              <li className="variant-wrapper">
-                <input required type="radio" name="variant" id="variant-2" />
-                <label htmlFor="variant-2">2</label>
-              </li>
-              <li className="variant-wrapper">
-                <input required type="radio" name="variant" id="variant-3" />
-                <label htmlFor="variant-3">3</label>
-              </li>
-              <li className="variant-wrapper">
-                <input required type="radio" name="variant" id="variant-4" />
-                <label htmlFor="variant-4">4</label>
-              </li>
-              <li className="variant-wrapper">
-                <input required type="radio" name="variant" id="variant-5" />
-                <label htmlFor="variant-5">5</label>
-              </li>
+              {variants.map((elem)=>(
+                <AnswerItem
+                key={elem.variantId}
+                id={elem.variantId}
+                answerText={elem.variantText}
+                answerChange={()=>setGradeVariant(elem.variantText)}/>
+              ))}
             </ul>
-            <button type="button" id="next-btn" disabled>
-              Далее
-            </button>
+            <AppButton isDisabled={buttonError} id="next-btn" buttonClick={()=>navigate("/thanks")}/>
           </div>
         </div>
       </div>
